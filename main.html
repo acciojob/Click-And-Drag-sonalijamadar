@@ -36,46 +36,34 @@
 
 <script>
 //Your code goes here 
+	const container = document.querySelector('.items');
 
-  const container = document.querySelector('.items');
-  const cubes = document.querySelectorAll('.item');
-  let activeCube = null;
-  let offsetX = 0;
-  let offsetY = 0;
+  let isDown = false;
+  let startX;
+  let scrollLeft;
 
-  cubes.forEach(cube => {
-    cube.addEventListener('mousedown', startDrag);
+  container.addEventListener('mousedown', (e) => {
+    isDown = true;
+    startX = e.pageX - container.offsetLeft;
+    scrollLeft = container.scrollLeft;
   });
-function startDrag(e) {
-    activeCube = e.target;
-	const rect = activeCube.getBoundingClientRect();
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
-    activeCube.style.position = 'absolute';
-    activeCube.style.zIndex = 1000;
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDrag);
-  }
-	function drag(e) {
-    if (!activeCube) return;
-    const containerRect = container.getBoundingClientRect();
-    const cubeRect = activeCube.getBoundingClientRect();
-    let x = e.clientX - containerRect.left - offsetX;
-    let y = e.clientY - containerRect.top - offsetY;
-	const maxX = containerRect.width - cubeRect.width;
-    const maxY = containerRect.height - cubeRect.height;
-	x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
-    activeCube.style.left = x + 'px';
-    activeCube.style.top = y + 'px';
-  }
-	function stopDrag() {
-    document.removeEventListener('mousemove', drag);
-    document.removeEventListener('mouseup', stopDrag);
-    activeCube = null;
-  }
 
-	
+  container.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  container.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  container.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+
+    const x = e.pageX - container.offsetLeft;
+    const walk = startX - x; 
+    container.scrollLeft = scrollLeft + walk;
+  });
 </script>
 
   </body>
